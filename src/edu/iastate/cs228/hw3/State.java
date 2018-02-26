@@ -1,6 +1,10 @@
 package edu.iastate.cs228.hw3;
 
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  *  
@@ -42,7 +46,7 @@ public class State implements Cloneable, Comparable<State>
 	private int ManhattanDistance = -1;   // Manhattan distance between this state and the 
 	                                      // goal state; negative if not computed yet. 
 
-	
+	ArrayList<Integer> dupeNumbers = new ArrayList<Integer>();
 	/**
 	 * Constructor (for the initial state).  
 	 * 
@@ -58,7 +62,31 @@ public class State implements Cloneable, Comparable<State>
 	 */
     public State(int[][] board) throws IllegalArgumentException 
     {
-    	// TODO 
+        try{
+            if(board.length != 3 || board[0].length != 3){
+                throw new IllegalArgumentException("Board Size is not 3x3");
+            }
+
+            for(int x = 0; x < 3; x++){
+                for(int y = 0; y < 3; y++){
+                    if(!dupeNumbers.contains(board[x][y])){
+                        dupeNumbers.add(board[x][y]);
+                    }
+                    else{
+                        throw new IllegalArgumentException("Entries are not within 0 <= x <= 8");
+                    }
+                }
+            }
+
+            move = null;
+            numMoves = 0;
+        }
+
+        catch(IllegalArgumentException e){
+            e.printStackTrace();
+        }
+
+		this.board = board;
 	}
     
     
@@ -77,8 +105,29 @@ public class State implements Cloneable, Comparable<State>
      */
     public State (String inputFileName) throws FileNotFoundException, IllegalArgumentException
     {
-    	
-    	// TODO 
+        try{
+            int[][] tempoBoard = new int[3][3];
+            String tempString;
+            FileReader input = new FileReader(inputFileName);
+            Scanner inputScan = new Scanner(input);
+            int lineCount = 0;
+            while(inputScan.hasNextLine()){
+                lineCount++;
+                inputScan.nextLine();
+            }
+
+
+
+        }
+        catch (IllegalArgumentException e){
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // TODO
 	}
     
     
@@ -155,8 +204,18 @@ public class State implements Cloneable, Comparable<State>
     @Override 
     public String toString()
     {
-    	// TODO 
-    	return null; 
+        String output = "";
+        for(int x = 0; x < 3; x++){
+            for (int y = 0; y < 3; y++){
+                if(y != 2){
+                    output = output + Integer.toString(board[x][y]) + " ";
+                }
+                else {
+                    output = output + Integer.toString(board[x][y]) + "\n";
+                }
+            }
+        }
+    	return output;
     }
     
     
@@ -169,8 +228,14 @@ public class State implements Cloneable, Comparable<State>
     @Override
     public Object clone()
     {
-    	// TODO 
-    	return null; 
+    	// TODO
+        State newBoard = null;
+        try {
+            newBoard = new State(this.board.toString());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return newBoard;
     }
   
 
@@ -181,7 +246,10 @@ public class State implements Cloneable, Comparable<State>
     @Override 
     public boolean equals(Object o)
     {
-    	// TODO 
+    	// TODO
+        if(this.getClass() != o.getClass()){
+            return false;
+        }
     	return false; 
     }
         
@@ -194,7 +262,7 @@ public class State implements Cloneable, Comparable<State>
      * If heu == TileMismatch, add up numMoves and the return values from computeNumMismatchedTiles().
      * If heu == MahattanDist, add up numMoves and the return values of computeMahattanDistance(). 
      * 
-     * @param h
+     * @param
      * @return estimated number of moves from the initial state to the goal state via this state.
      * @throws IllegalArgumentException if heuristic is neither 0 nor 1. 
      */
