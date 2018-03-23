@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 
 /**
@@ -31,8 +32,9 @@ import java.util.Scanner;
 public class State implements Cloneable, Comparable<State>
 {
 	public int[][] board; 		// configuration of tiles 
-	
-	public State previous;    	// previous node on the OPEN/CLOSED list
+    private int[][] goalState = {{1, 2, 3} , {8, 0, 4}, {7, 6, 5}};
+
+    public State previous;    	// previous node on the OPEN/CLOSED list
 	public State next; 			// next node on the OPEN/CLOSED list
 	public State predecessor; 	// predecessor node on the path from the initial state 
 	
@@ -198,17 +200,7 @@ public class State implements Cloneable, Comparable<State>
      */
     public boolean isGoalState()
     {
-        int[][] goalState = {{1, 2, 3} , {8, 0, 4}, {7, 6, 5}};
-
-        for(int x = 0; x < 3; x++){
-            for(int y = 0; y < 3; y++){
-                if(board[x][y] != goalState[x][y]){
-                    return false;
-                }
-            }
-        }
-
-        return true;
+        return (computeNumMismatchedTiles() == 0);
     }
     
     
@@ -307,8 +299,18 @@ public class State implements Cloneable, Comparable<State>
      */
     public int cost() throws IllegalArgumentException
     {
-    	// TODO 
-    	return 0; 
+        if(heu == Heuristic.TileMismatch){
+            return numMoves + computeNumMismatchedTiles();
+        }
+        else if(heu == Heuristic.ManhattanDist){
+            return numMoves + computeManhattanDistance();
+        }
+
+        if(heu != Heuristic.TileMismatch || heu != Heuristic.ManhattanDist){
+            throw new IllegalArgumentException("Heuristic fail.");
+        }
+
+        return 0;
     }
 
     
@@ -324,8 +326,17 @@ public class State implements Cloneable, Comparable<State>
     @Override
     public int compareTo(State s)
     {
-    	// TODO 
-    	return 0; 
+    	if(this.cost() < s.cost()){
+    	    return -1;
+        }
+
+        else if(this.cost() > s.cost()){
+    	    return 1;
+        }
+
+        else{
+    	    return 0;
+        }
     }
     
 
@@ -336,8 +347,16 @@ public class State implements Cloneable, Comparable<State>
      */
 	private int computeNumMismatchedTiles()
 	{
-		// TODO 
-		return 0; 
+	    int misMatch = 0;
+
+        for(int x = 0; x < 3; x++){
+	        for(int y = 0; y < 3; y++){
+	            if(this.board[x][y] != goalState[x][y]){
+	                misMatch++;
+                }
+            }
+        }
+		return misMatch;
 	}
 
 	
@@ -347,8 +366,23 @@ public class State implements Cloneable, Comparable<State>
 	 */
 	private int computeManhattanDistance()
 	{
-		// TODO 
-		return 0; 
+        int dist = 0;
+        /*
+                     Goal State
+                        1 2 3
+                        8 0 4
+                        7 6 5
+         */
+
+        for(int x = 0; x < 3; x++){
+            for(int y = 0; y < 3; y++){
+                if(board[x][y] != goalState[x][y] && Integer.toString(board[x][y]).charAt(0) != '0'){
+                    dist += findDistance(board[x][y], x, y);
+                }
+            }
+        }
+
+        return dist;
 	}
 
     /**
@@ -370,7 +404,6 @@ public class State implements Cloneable, Comparable<State>
 	            if(board[x][y] == 0){
 	                x1++;
                 }
-
                 else if(board[x][y] == 1){
 	                x2++;
                 }
@@ -395,7 +428,7 @@ public class State implements Cloneable, Comparable<State>
                 else if(board[x][y] == 8){
                     x9++;
                 }
-                else if(board[x][y] == ' '){
+                else {
 	                return false;
                 }
             }
@@ -405,5 +438,16 @@ public class State implements Cloneable, Comparable<State>
 	        return true;
 	    }
 	    else return false;
+    }
+
+    private int findDistance(int i, int xCoord, int yCoord){
+	    for(int x = 0; x < 3; x++){
+	        for(int y = 0; y < 3; y++){
+	            if(goalState[x][y] == i){
+	                return Math.abs(xCoord - x) + Math.abs(yCoord - y);
+                }
+            }
+        }
+        return 0;
     }
 }

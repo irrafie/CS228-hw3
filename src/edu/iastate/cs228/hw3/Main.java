@@ -23,7 +23,7 @@ public class Main {
 
 
 
-        State test = new State(temp);
+        State test = new State("test.txt");
         System.out.println(test.toString());
         System.out.println(test.isGoalState());
     }
