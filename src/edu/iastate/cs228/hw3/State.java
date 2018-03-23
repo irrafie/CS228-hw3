@@ -87,6 +87,9 @@ public class State implements Cloneable, Comparable<State>
         }
 
 		this.board = board;
+        if(!allPresentCheck()){
+            throw new IllegalArgumentException("Input error.");
+        }
 	}
     
     
@@ -107,27 +110,40 @@ public class State implements Cloneable, Comparable<State>
     {
         try{
             int[][] tempoBoard = new int[3][3];
-            String tempString;
+            String[] tempString = new String[3];
             FileReader input = new FileReader(inputFileName);
             Scanner inputScan = new Scanner(input);
             int lineCount = 0;
             while(inputScan.hasNextLine()){
+                tempString[lineCount] = inputScan.nextLine();
                 lineCount++;
-                inputScan.nextLine();
+            }
+
+            if(lineCount != 3){
+                throw new IllegalArgumentException("Input error.");
+            }
+
+            if((tempString[0].length() != 5) || (tempString[1].length() != 5) || (tempString[2].length() != 5)){
+                throw new IllegalArgumentException("Input error.");
+            }
+
+            for(int x = 0; x < 3; x++){
+                tempoBoard[x][0] = tempString[x].charAt(0) - '0';
+                tempoBoard[x][1] = tempString[x].charAt(2) - '0';
+                tempoBoard[x][2] = tempString[x].charAt(4) - '0';
+            }
+
+            this.board = tempoBoard;
+
+            if(!allPresentCheck()){
+                throw new IllegalArgumentException("Input error.");
             }
 
 
-
         }
-        catch (IllegalArgumentException e){
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        catch (IllegalArgumentException | FileNotFoundException e){
             e.printStackTrace();
         }
-
-        // TODO
 	}
     
     
@@ -178,12 +194,21 @@ public class State implements Cloneable, Comparable<State>
      * 		8 0 4 
      * 		7 6 5 
      * 
-     * @return
+     * @return  true if board is the same as goal state
      */
     public boolean isGoalState()
     {
-    	// TODO 
-    	return false; 
+        int[][] goalState = {{1, 2, 3} , {8, 0, 4}, {7, 6, 5}};
+
+        for(int x = 0; x < 3; x++){
+            for(int y = 0; y < 3; y++){
+                if(board[x][y] != goalState[x][y]){
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
     
     
@@ -207,11 +232,15 @@ public class State implements Cloneable, Comparable<State>
         String output = "";
         for(int x = 0; x < 3; x++){
             for (int y = 0; y < 3; y++){
+                String print = Integer.toString(board[x][y]);
+                if(print.charAt(0) == '0'){
+                    print = " ";
+                }
                 if(y != 2){
-                    output = output + Integer.toString(board[x][y]) + " ";
+                    output = output + print + " ";
                 }
                 else {
-                    output = output + Integer.toString(board[x][y]) + "\n";
+                    output = output + print + "\n";
                 }
             }
         }
@@ -246,11 +275,21 @@ public class State implements Cloneable, Comparable<State>
     @Override 
     public boolean equals(Object o)
     {
-    	// TODO
         if(this.getClass() != o.getClass()){
             return false;
         }
-    	return false; 
+
+        State tempState = (State)o;
+        int[][] temp = new int[3][3];
+        for(int x = 0; x < 3; x++){
+            for(int y = 0; y < 3; y++){
+                if(board[x][y] != tempState.board[x][y]){
+                    return false;
+                }
+            }
+        }
+
+    	return true;
     }
         
     
@@ -311,4 +350,60 @@ public class State implements Cloneable, Comparable<State>
 		// TODO 
 		return 0; 
 	}
+
+    /**
+     * checks if all numbers from 0 to 8 is present and only appears once
+     * @return  true if all numbers are present and no duplicates, else false
+     */
+	private boolean allPresentCheck(){
+	    int x1 = 0;
+        int x2 = 0;
+        int x3 = 0;
+        int x4 = 0;
+        int x5 = 0;
+        int x6 = 0;
+        int x7 = 0;
+        int x8 = 0;
+        int x9 = 0;
+	    for(int x = 0; x < 3; x++){
+	        for(int y = 0; y < 3; y++){
+	            if(board[x][y] == 0){
+	                x1++;
+                }
+
+                else if(board[x][y] == 1){
+	                x2++;
+                }
+                else if(board[x][y] == 2){
+                    x3++;
+                }
+                else if(board[x][y] == 3){
+                    x4++;
+                }
+                else if(board[x][y] == 4){
+                    x5++;
+                }
+                else if(board[x][y] == 5){
+                    x6++;
+                }
+                else if(board[x][y] == 6){
+                    x7++;
+                }
+                else if(board[x][y] == 7){
+                    x8++;
+                }
+                else if(board[x][y] == 8){
+                    x9++;
+                }
+                else if(board[x][y] == ' '){
+	                return false;
+                }
+            }
+        }
+
+	    if(x1 + x2 + x3 + x4 + x5 + x6 + x7 +x8 + x9 == 9){
+	        return true;
+	    }
+	    else return false;
+    }
 }
