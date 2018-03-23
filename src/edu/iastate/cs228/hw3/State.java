@@ -169,7 +169,7 @@ public class State implements Cloneable, Comparable<State>
     public State successorState(Move m) throws IllegalArgumentException 
     {
     	// TODO
-        int[] coord = new int[2];
+        int[] coord;
         coord = findCoord(0);
         int[][] tempoBoard = this.board;
         switch(m){
@@ -203,7 +203,7 @@ public class State implements Cloneable, Comparable<State>
                 break;
             case DOWN:
                 if (coord[0] != 0) {
-                    tempoBoard[coord[0]][coord[1]] = this.board[coord[0] - 1][coord[1] - 1];
+                    tempoBoard[coord[0]][coord[1]] = this.board[coord[0] - 1][coord[1]];
                     tempoBoard[coord[0] - 1][coord[1]] = 0;
                 }
                 else {
@@ -213,6 +213,8 @@ public class State implements Cloneable, Comparable<State>
 
         }
         State output = new State(tempoBoard);
+        System.out.println(output.toString());
+        System.out.println(this.toString());
         this.board = tempoBoard;
     	return output;
     }
@@ -229,8 +231,7 @@ public class State implements Cloneable, Comparable<State>
      */
     public boolean solvable()
     {
-    	// TODO 
-    	return false; 
+    	return (countInversions() % 2 != 0);
     }
     
     
@@ -508,4 +509,16 @@ public class State implements Cloneable, Comparable<State>
         }
         return temp;
 	}
+
+	private int countInversions(){
+	    int i = 0;
+	        for(int x = 0; x < 3; x++) {
+	            for (int y = 0; y < 3; y++) {
+
+                }
+            }
+
+
+	    return i;
+    }
 }
