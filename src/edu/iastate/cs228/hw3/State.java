@@ -168,7 +168,33 @@ public class State implements Cloneable, Comparable<State>
      */                                  
     public State successorState(Move m) throws IllegalArgumentException 
     {
-    	// TODO 
+    	// TODO
+        int[] coord = new int[2];
+        coord = findCoord(0);
+        State tempoBoard = this;
+        switch(m){
+            case UP:
+                if(coord[0] == 2) {
+                    this.board[coord[0]][coord[1]] = this.board[coord[0]][coord[1] - 1];
+                    this.board[coord[0]][coord[1] - 1] = 0;
+                } break;
+
+            case DOWN:
+                if(coord[0] == 0) {
+                    this.board[coord[0]][coord[1]] = this.board[coord[0]][coord[1] + 1];
+                    this.board[coord[0]][coord[1] + 1] = 0;
+                }break;
+            case LEFT:
+                if (coord[1] == 2) {
+                    this.board[coord[0]][coord[1]] = this.board[coord[0] + 1][coord[1]];
+                    this.board[coord[0] + 1][coord[1]] = 0;
+                }break;
+            case RIGHT:
+                if (coord[1] == 0) {
+                    this.board[coord[0]][coord[1]] = this.board[coord[0] - 1][coord[1] - 1];
+                    this.board[coord[0] - 1][coord[1]] = 0;
+                }break;
+        }
     	return null; 
     }
     
@@ -450,4 +476,17 @@ public class State implements Cloneable, Comparable<State>
         }
         return 0;
     }
+
+    private int[] findCoord(int check){
+	    int[] temp = new int[2];
+        for (int x = 0; x < 3; x++){
+            for(int y = 0; y < 3; y++){
+                if(this.board[x][y] == check){
+                    temp[0] = x;
+                    temp[1] = y;
+                }
+            }
+        }
+        return temp;
+	}
 }
