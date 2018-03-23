@@ -26,5 +26,8 @@ public class Main {
         State test = new State("test.txt");
         System.out.println(test.toString());
         System.out.println(test.isGoalState());
+
+        System.out.println(test.successorState(Move.UP));
+        System.out.println(test.successorState(Move.DOWN));
     }
 }

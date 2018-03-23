@@ -171,31 +171,50 @@ public class State implements Cloneable, Comparable<State>
     	// TODO
         int[] coord = new int[2];
         coord = findCoord(0);
-        State tempoBoard = this;
+        int[][] tempoBoard = this.board;
         switch(m){
-            case UP:
-                if(coord[0] == 2) {
-                    this.board[coord[0]][coord[1]] = this.board[coord[0]][coord[1] - 1];
-                    this.board[coord[0]][coord[1] - 1] = 0;
-                } break;
-
-            case DOWN:
-                if(coord[0] == 0) {
-                    this.board[coord[0]][coord[1]] = this.board[coord[0]][coord[1] + 1];
-                    this.board[coord[0]][coord[1] + 1] = 0;
-                }break;
-            case LEFT:
-                if (coord[1] == 2) {
-                    this.board[coord[0]][coord[1]] = this.board[coord[0] + 1][coord[1]];
-                    this.board[coord[0] + 1][coord[1]] = 0;
-                }break;
             case RIGHT:
-                if (coord[1] == 0) {
-                    this.board[coord[0]][coord[1]] = this.board[coord[0] - 1][coord[1] - 1];
-                    this.board[coord[0] - 1][coord[1]] = 0;
-                }break;
+                if(coord[1] != 2) {
+                    tempoBoard[coord[0]][coord[1]] = this.board[coord[0]][coord[1] - 1];
+                    tempoBoard[coord[0]][coord[1] - 1] = 0;
+                }
+                else {
+                    throw new IllegalArgumentException("Illegal Argument");
+                }
+                break;
+
+            case LEFT:
+                if(coord[1] != 0) {
+                    tempoBoard[coord[0]][coord[1]] = this.board[coord[0]][coord[1] + 1];
+                    tempoBoard[coord[0]][coord[1] + 1] = 0;
+                }
+                else {
+                    throw new IllegalArgumentException("Illegal Argument");
+                }
+                break;
+            case UP:
+                if (coord[0] != 2) {
+                    tempoBoard[coord[0]][coord[1]] = this.board[coord[0] + 1][coord[1]];
+                    tempoBoard[coord[0] + 1][coord[1]] = 0;
+                }
+                else {
+                    throw new IllegalArgumentException("Illegal Argument");
+                }
+                break;
+            case DOWN:
+                if (coord[0] != 0) {
+                    tempoBoard[coord[0]][coord[1]] = this.board[coord[0] - 1][coord[1] - 1];
+                    tempoBoard[coord[0] - 1][coord[1]] = 0;
+                }
+                else {
+                    throw new IllegalArgumentException("Illegal Argument");
+                }
+                break;
+
         }
-    	return null; 
+        State output = new State(tempoBoard);
+        this.board = tempoBoard;
+    	return output;
     }
     
         
