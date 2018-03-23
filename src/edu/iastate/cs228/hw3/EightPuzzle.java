@@ -27,7 +27,9 @@ public class EightPuzzle
 		// TODO 
 		
 		// 1) Return null if the puzzle is not solvable. 
-				
+		if(!s0.solvable()){
+			return null;
+		}
 
 		// 2) Otherwise, solve the puzzle with two heuristics.  The two solutions may be different
 		//    but must have the same length for optimality. 

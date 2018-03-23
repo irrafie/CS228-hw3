@@ -1,6 +1,7 @@
 package edu.iastate.cs228.hw3;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -39,8 +40,11 @@ public class OrderedStateList
 	  public OrderedStateList(Heuristic h, boolean isOpen)
 	  {
 		  //	TODO
-		  State.heu = h;   // initialize heuristic used for evaluating all State objects. 
-
+		  List<State> orderedState;
+		  State.heu = h;   // initialize heuristic used for evaluating all State objects.
+		  head.next = head.next.previous;
+		  head.previous = head.previous.next;
+		  size = 0;
 	  }
 
 	  

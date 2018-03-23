@@ -79,7 +79,9 @@ public class State implements Cloneable, Comparable<State>
                     }
                 }
             }
-
+            previous = null;
+            next = null;
+            predecessor = null;
             move = null;
             numMoves = 0;
         }
