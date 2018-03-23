@@ -146,6 +146,8 @@ public class State implements Cloneable, Comparable<State>
         catch (IllegalArgumentException | FileNotFoundException e){
             e.printStackTrace();
         }
+
+        System.out.println(this.countInversions());
 	}
     
     
@@ -171,7 +173,7 @@ public class State implements Cloneable, Comparable<State>
     	// TODO
         int[] coord;
         coord = findCoord(0);
-        int[][] tempoBoard = this.board;
+        int[][] tempoBoard = this.board.clone();
         switch(m){
             case RIGHT:
                 if(coord[1] != 2) {
@@ -216,6 +218,8 @@ public class State implements Cloneable, Comparable<State>
         System.out.println(output.toString());
         System.out.println(this.toString());
         this.board = tempoBoard;
+        this.next = null;
+        this.previous = null;
     	return output;
     }
     
@@ -223,9 +227,7 @@ public class State implements Cloneable, Comparable<State>
     /**
      * Determines if the board configuration in this state can be rearranged into the goal configuration. 
      * According to the appendix in the project description, we check if this state has an odd number of 
-     * inversions. 
-     */
-    /**
+     * inversions.
      * 
      * @return true if the puzzle starting in this state can be rearranged into the goal state.
      */
@@ -295,13 +297,11 @@ public class State implements Cloneable, Comparable<State>
     @Override
     public Object clone()
     {
-    	// TODO
         State newBoard = null;
-        try {
-            newBoard = new State(this.board.toString());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+            newBoard = new State(this.board);
+            newBoard.previous = null;
+            newBoard.next = null;
+            newBoard.predecessor = null;
         return newBoard;
     }
   
@@ -511,14 +511,23 @@ public class State implements Cloneable, Comparable<State>
 	}
 
 	private int countInversions(){
-	    int i = 0;
-	        for(int x = 0; x < 3; x++) {
-	            for (int y = 0; y < 3; y++) {
+	    int[] temp = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 0};
+        int a = 0;
+	    for(int x = 0; x < 3; x++){
+	        for(int y = 0; y < 3; y++){
+	            temp[a] = board[x][y];
+	            a++;
+            }
+        }
+        int counter = 0;
 
+        for(int i = 0; i < 9; i++){
+            for(int o = 0+i; o < 9; o++){
+                if(temp[i] > temp[o] && temp[o] != 0){
+                    counter++;
                 }
             }
-
-
-	    return i;
+        }
+	    return counter;
     }
 }
