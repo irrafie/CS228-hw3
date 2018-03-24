@@ -41,8 +41,8 @@ public class State implements Cloneable, Comparable<State>
 	public Move move;           // the move that generated this state from its predecessor
 	public int numMoves; 	    // number of moves from the initial state to this state
 
-	public static Heuristic heu; // heuristic used. shared by all the states. 
-	
+	public static Heuristic heu; // heuristic used. shared by all the states.
+
 	private int numMismatchedTiles = -1;  // number of mismatched tiles between this state 
 	                                      // and the goal state; negative if not computed yet.
 	private int ManhattanDistance = -1;   // Manhattan distance between this state and the 
@@ -149,7 +149,6 @@ public class State implements Cloneable, Comparable<State>
             e.printStackTrace();
         }
 
-        System.out.println(this.countInversions());
 	}
     
     
@@ -217,8 +216,6 @@ public class State implements Cloneable, Comparable<State>
 
         }
         State output = new State(tempoBoard);
-        System.out.println(output.toString());
-        System.out.println(this.toString());
         this.board = tempoBoard;
         this.next = null;
         this.previous = null;
@@ -347,6 +344,7 @@ public class State implements Cloneable, Comparable<State>
      */
     public int cost() throws IllegalArgumentException
     {
+        heu = Heuristic.ManhattanDist;
         if(heu == Heuristic.TileMismatch){
             return numMoves + computeNumMismatchedTiles();
         }
