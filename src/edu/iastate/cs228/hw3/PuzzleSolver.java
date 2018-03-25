@@ -22,8 +22,9 @@ public class PuzzleSolver
 	 */
 	public static void main(String[] args) throws FileNotFoundException, IllegalArgumentException
 	{
-		// TODO 
-		
+		State temp = new State(args[0]);
+
+		System.out.println(EightPuzzle.solve8Puzzle(temp));
 		// Read an initial board configuration from a file.  
 
 		// Call EightPuzzle.solve8puzzle() to solve the puzzle. 

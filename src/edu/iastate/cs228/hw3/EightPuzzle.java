@@ -24,8 +24,7 @@ public class EightPuzzle
 	 */
 	public static String solve8Puzzle(State s0)
 	{
-		// TODO 
-		
+
 		// 1) Return null if the puzzle is not solvable. 
 		if(!s0.solvable()){
 			return null;
@@ -44,8 +43,11 @@ public class EightPuzzle
 		
 		// 3) Combine the two solution strings into one that would print out in the 
 		//    output format specified in Section 5 of the project description.
-		
-		return null; 
+        String heu = "";
+		for(int i = 0; i < 2; i++) {
+            heu += s0.cost() + " moves in total (heuristic: the" + h[i] + " distance) \n\n";
+        }
+		return heu;
 	}
 
 	
@@ -68,7 +70,12 @@ public class EightPuzzle
 		OrderedStateList OPEN = new OrderedStateList(h, true); 
 		OrderedStateList CLOSE = new OrderedStateList(h, false);
 					
-		
+		OPEN.addState(s0);
+		if(OPEN.size() == 0){
+			return null;
+		}
+
+
 		// Implement the algorithm described in Section 3 to solve the puzzle. 
 		// Once a goal state s is reached, call solutionPath(s) and return the solution string. 
 			

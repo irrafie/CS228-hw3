@@ -1,5 +1,6 @@
 package edu.iastate.cs228.hw3;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -26,8 +27,8 @@ public class OrderedStateList
 	 */
 	  private State head;           // dummy node as the head of the sorted linked list 
 	  private int size = 0;
-	  
-	  private boolean isOPEN;       // true if this OrderedStateList object is the list OPEN and false 
+
+	  private boolean isOPEN;       // true if this OrderedStateList object is the list OPEN and false
 	                                // if the list CLOSED.
 
 	  /**
@@ -39,12 +40,11 @@ public class OrderedStateList
 	   */
 	  public OrderedStateList(Heuristic h, boolean isOpen)
 	  {
-		  //	TODO
-		  List<State> orderedState;
 		  State.heu = h;   // initialize heuristic used for evaluating all State objects.
-		  head.next = head.next.previous;
-		  head.previous = head.previous.next;
+		  //head.next = head;
+		  //head.previous = head;
 		  size = 0;
+		  isOPEN = isOpen;
 	  }
 
 	  
@@ -65,7 +65,33 @@ public class OrderedStateList
 	   */
 	  public void addState(State s)
 	  {
-		  // TODO 
+            State current = head;
+            State behind = null;
+
+            while(current != null && current.compareTo(s) < 0){
+                behind = current;
+                current = current.next;
+            }
+
+            State net = s;
+            net.next = current;
+            net.previous = behind;
+
+            if(behind == null){
+                head = s;
+            }
+
+            else{
+                behind.next = s;
+                s.previous = behind;
+            }
+
+            if(current != null){
+                current.previous = s;
+                s.next = current;
+
+            }
+
 	  }
 	  
 	  
@@ -81,7 +107,16 @@ public class OrderedStateList
 	   */
 	  public State findState(State s)
 	  {
-		  // TODO 
+	      State temp = head;
+	      while(temp.next != null){
+	          if(temp.compareTo(s) == 0){
+	              return temp;
+              }
+              else
+              {
+                  temp = temp.next;
+              }
+          }
 		  return null; 
 	  }
 	  
@@ -95,20 +130,46 @@ public class OrderedStateList
 	   */
 	  public void removeState(State s) throws IllegalStateException
 	  {
-		  // TODO 
+          State current = findState(s);
+          if(current == null){
+              throw new IllegalStateException();
+          }
+
+          State front = current.next;
+          State behind = current.previous;
+
+          if(behind == null){
+              this.head = current.next;
+              this.head.previous = null;
+          }
+
+          if(behind != null || front != null){
+              State temp = current.previous;
+              temp.next = current.next;
+              temp = current.next;
+              temp.previous = current.previous;
+          }
+
 	  }
 	  
 	  
 	  /**
 	   * Remove the first state on the list and return it.  This is used by the A* algorithm in maintaining
-	   * the OPEN list. 
-	   * 
-	   * @return  
-	   */
+	   * the OPEN list.
+	   *
+       */
 	  public State remove()
 	  {
-		  // TODO
-		  return null; 
+	      if(head == null){
+	          return null;
+          }
+
+	      State tempo = head;
+
+	      head = head.next;
+	      head.previous = null;
+
+	      return tempo;
 	  }
 	  
 	  
@@ -125,8 +186,13 @@ public class OrderedStateList
 	   */
 	  private int compareStates(State s1, State s2)
 	  {
-		  // TODO 
-		  
-		  return 0; 
+          if(isOPEN){
+              return s1.compareTo(s2);
+          }
+
+          else{
+              StateComparator comp = new StateComparator();
+              return comp.compare(s1,s2);
+          }
 	  }
 }

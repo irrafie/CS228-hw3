@@ -66,7 +66,7 @@ public class State implements Cloneable, Comparable<State>
     {
         try{
             if(board.length != 3 || board[0].length != 3){
-                throw new IllegalArgumentException("Board Size is not 3x3");
+                throw new IllegalArgumentException();
             }
 
             for(int x = 0; x < 3; x++){
@@ -75,7 +75,7 @@ public class State implements Cloneable, Comparable<State>
                         dupeNumbers.add(board[x][y]);
                     }
                     else{
-                        throw new IllegalArgumentException("Entries are not within 0 <= x <= 8");
+                        throw new IllegalArgumentException();
                     }
                 }
             }
@@ -91,9 +91,6 @@ public class State implements Cloneable, Comparable<State>
         }
 
 		this.board = board;
-        if(!allPresentCheck()){
-            throw new IllegalArgumentException("Input error.");
-        }
 	}
     
     
@@ -124,11 +121,11 @@ public class State implements Cloneable, Comparable<State>
             }
 
             if(lineCount != 3){
-                throw new IllegalArgumentException("Input error.");
+                throw new IllegalArgumentException();
             }
 
             if((tempString[0].length() != 5) || (tempString[1].length() != 5) || (tempString[2].length() != 5)){
-                throw new IllegalArgumentException("Input error.");
+                throw new IllegalArgumentException();
             }
 
             for(int x = 0; x < 3; x++){
@@ -139,9 +136,6 @@ public class State implements Cloneable, Comparable<State>
 
             this.board = tempoBoard;
 
-            if(!allPresentCheck()){
-                throw new IllegalArgumentException("Input error.");
-            }
 
 
         }
@@ -172,36 +166,28 @@ public class State implements Cloneable, Comparable<State>
     public State successorState(Move m) throws IllegalArgumentException 
     {
     	// TODO
+        State predec = (State) this.clone();
         int[] coord;
         coord = findCoord(0);
         int[][] tempoBoard = this.board.clone();
         switch(m){
-            case RIGHT:
-                if(coord[1] != 2) {
-                    tempoBoard[coord[0]][coord[1]] = this.board[coord[0]][coord[1] - 1];
-                    tempoBoard[coord[0]][coord[1] - 1] = 0;
-                }
-                else {
-                    throw new IllegalArgumentException("Illegal Argument");
-                }
-                break;
-
             case LEFT:
-                if(coord[1] != 0) {
+                if(coord[1] != 2) {
                     tempoBoard[coord[0]][coord[1]] = this.board[coord[0]][coord[1] + 1];
                     tempoBoard[coord[0]][coord[1] + 1] = 0;
                 }
                 else {
-                    throw new IllegalArgumentException("Illegal Argument");
+                    throw new IllegalArgumentException();
                 }
                 break;
-            case UP:
-                if (coord[0] != 2) {
-                    tempoBoard[coord[0]][coord[1]] = this.board[coord[0] + 1][coord[1]];
-                    tempoBoard[coord[0] + 1][coord[1]] = 0;
+
+            case RIGHT:
+                if(coord[1] != 0) {
+                    tempoBoard[coord[0]][coord[1]] = this.board[coord[0]][coord[1] - 1];
+                    tempoBoard[coord[0]][coord[1] - 1] = 0;
                 }
                 else {
-                    throw new IllegalArgumentException("Illegal Argument");
+                    throw new IllegalArgumentException();
                 }
                 break;
             case DOWN:
@@ -210,13 +196,24 @@ public class State implements Cloneable, Comparable<State>
                     tempoBoard[coord[0] - 1][coord[1]] = 0;
                 }
                 else {
-                    throw new IllegalArgumentException("Illegal Argument");
+                    throw new IllegalArgumentException();
+                }
+                break;
+            case UP:
+                if (coord[0] != 2) {
+                    tempoBoard[coord[0]][coord[1]] = this.board[coord[0] + 1][coord[1]];
+                    tempoBoard[coord[0] + 1][coord[1]] = 0;
+                }
+                else {
+                    throw new IllegalArgumentException();
                 }
                 break;
 
         }
         State output = new State(tempoBoard);
-        this.board = tempoBoard;
+        output.predecessor = predec;
+        output.move = m;
+        numMoves++;
         this.next = null;
         this.previous = null;
     	return output;
@@ -296,8 +293,14 @@ public class State implements Cloneable, Comparable<State>
     @Override
     public Object clone()
     {
+        int[][] temp = new int[3][3];
         State newBoard = null;
-            newBoard = new State(this.board);
+        for(int x = 0; x < 3; x++){
+            for(int y = 0; y < 3; y++){
+                temp[x][y] = board[x][y];
+            }
+        }
+            newBoard = new State(temp);
             newBoard.previous = null;
             newBoard.next = null;
             newBoard.predecessor = null;
@@ -320,7 +323,7 @@ public class State implements Cloneable, Comparable<State>
         int[][] temp = new int[3][3];
         for(int x = 0; x < 3; x++){
             for(int y = 0; y < 3; y++){
-                if(board[x][y] != tempState.board[x][y]){
+                if(this.board[x][y] != tempState.board[x][y]){
                     return false;
                 }
             }
@@ -344,7 +347,6 @@ public class State implements Cloneable, Comparable<State>
      */
     public int cost() throws IllegalArgumentException
     {
-        heu = Heuristic.ManhattanDist;
         if(heu == Heuristic.TileMismatch){
             return numMoves + computeNumMismatchedTiles();
         }
@@ -353,7 +355,7 @@ public class State implements Cloneable, Comparable<State>
         }
 
         if(heu != Heuristic.TileMismatch || heu != Heuristic.ManhattanDist){
-            throw new IllegalArgumentException("Heuristic fail.");
+            throw new IllegalArgumentException();
         }
 
         return 0;
@@ -397,7 +399,7 @@ public class State implements Cloneable, Comparable<State>
 
         for(int x = 0; x < 3; x++){
 	        for(int y = 0; y < 3; y++){
-	            if(this.board[x][y] != goalState[x][y]){
+	            if(this.board[x][y] != goalState[x][y] && (this.board[x][y] != 0)){
 	                misMatch++;
                 }
             }
@@ -422,7 +424,7 @@ public class State implements Cloneable, Comparable<State>
 
         for(int x = 0; x < 3; x++){
             for(int y = 0; y < 3; y++){
-                if(board[x][y] != goalState[x][y] && Integer.toString(board[x][y]).charAt(0) != '0'){
+                if(this.board[x][y] != goalState[x][y] && this.board[x][y] != 0){
                     dist += findDistance(board[x][y], x, y);
                 }
             }
@@ -490,7 +492,7 @@ public class State implements Cloneable, Comparable<State>
 	    for(int x = 0; x < 3; x++){
 	        for(int y = 0; y < 3; y++){
 	            if(goalState[x][y] == i){
-	                return Math.abs(xCoord - x) + Math.abs(yCoord - y);
+	                return Math.abs(x - xCoord) + Math.abs(y - yCoord);
                 }
             }
         }
